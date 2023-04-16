@@ -1,48 +1,37 @@
-import sys
-import threading
-from utils import elevate, is_process_running, display_error_popup
+from p_hacker_handler import ProcessHackerHandler
+from priority import set_process_priority_by_name
 from time import sleep
-from priority import set_high_priority
-from p_hacker_handler import PHackerHandler
+from utils import elevate, is_process_running
 
-def main(game_exe_name, game_name):
+import sys
+
+def main(game_name: str) -> None:
     elevate()
     print('Starting..')
 
     if is_process_running(game_name):
         print('Game is already running!')
-        set_high_priority(game_exe_name)
+        set_process_priority_by_name(game_name)
         print('Exiting..')
         return
 
-    process_hacker = PHackerHandler()
+    process_hacker = ProcessHackerHandler()
     process_hacker.stop_process_if_running()
-    sleep(10)
 
-    while not is_process_running(game_exe_name):
+    while not is_process_running(game_name):
         sleep(1)
 
-    set_high_priority(game_exe_name)
+    set_process_priority_by_name(game_name)
 
-    def exit_callback():
-        process_hacker.start_process()
-        sys.exit(0)
-
-    tray_thread = threading.Thread(target=create_tray_icon, args=(exit_callback,))
-    tray_thread.start()
-
-    while is_process_running(game_exe_name):
+    while is_process_running(game_name):
         sleep(1)
 
     process_hacker.start_process()
 
 if __name__ == '__main__':
-    if len(sys.argv) != 3:
-        error_message = "Usage: python main.py <game_exe_name> <game_name>"
-        display_error_popup(error_message)
+    if len(sys.argv) != 2:
+        error_message = "Usage: python main.py <game_name>"
         sys.exit(1)
 
-    game_exe_name = sys.argv[1]
-    game_name = sys.argv[2]
-
-    main(game_exe_name, game_name)
+    game_name = str(sys.argv[1])
+    main(game_name)

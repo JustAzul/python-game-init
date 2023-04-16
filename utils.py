@@ -1,6 +1,6 @@
 import os
-import sys
 import psutil
+import sys
 import win32com.shell.shell as shell
 
 ASADMIN = 'asadmin'
@@ -20,14 +20,19 @@ def is_process_running(exe_name: str) -> bool:
     """Checks if a process is running by name."""
     return any(exe_name.lower() in process.name().lower() for process in psutil.process_iter())
 
-def is_game_running() -> bool:
-    """Checks if the 'Fortnite' game is running."""
-    return is_process_running('Fortnite')
-
 def elevate():
     """Restarts the script with elevated privileges if not already running as administrator."""
-    if sys.argv[-1] != ASADMIN:
+    if not sys.argv[-1] != ASADMIN:
         script = os.path.abspath(sys.argv[0])
-        params = ' '.join([script] + sys.argv[1:] + [ASADMIN])
-        shell.ShellExecuteEx('runas', sys.executable, params)
+        params = ' '.join([script] + sys.argv[1:])
+        shell.ShellExecuteEx(lpVerb='runas', lpFile=sys.executable, lpParameters=params)
         sys.exit(0)
+        
+
+
+
+def find_pid_from_name(name):
+    for proc in psutil.process_iter(['name']):
+        if name.lower() in proc.info['name'].lower():
+            return proc.pid
+    return None

@@ -1,10 +1,9 @@
-import os
-import subprocess
-import psutil
 from threading import Thread
 from time import sleep
 from utils import is_process_running, kill_process_name
-
+import os
+import psutil
+import subprocess
 
 class ProcessHackerHandler(Thread):
     def __init__(self):
@@ -45,7 +44,7 @@ class ProcessHackerHandler(Thread):
         print(f'ProcessHackerHandler handle_kernel: {new_state}')
         os.system('cmd /c sc ' + new_state + ' kprocesshacker3')
         
-    def stop_process(self):
+    def stop_process_if_running(self):
         if self.is_process_running() == True:
             self.kill()
             
