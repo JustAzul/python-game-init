@@ -1,9 +1,18 @@
 from p_hacker_handler import ProcessHackerHandler
 from priority import set_process_priority_by_name, PriorityLevel
 from time import sleep
+from tkinter import messagebox
 from utils import elevate, is_process_running
+import tkinter as tk
 
 import sys
+
+def show_error_message(message):
+    """Displays an error message popup."""
+    root = tk.Tk()
+    root.withdraw()
+    messagebox.showerror("Error", message)
+    sys.exit(1)
 
 def main(game_name: str) -> None:
     elevate()
@@ -30,7 +39,9 @@ def main(game_name: str) -> None:
 
 if __name__ == '__main__':
     if len(sys.argv) != 2:
-        error_message = "Usage: python main.py <game_name>"
+        error_message = "Arguments are not valid."
+        print(error_message)
+        show_error_message(error_message)
         sys.exit(1)
 
     game_name = str(sys.argv[1])
