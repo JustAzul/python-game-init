@@ -27,9 +27,6 @@ def elevate():
         params = ' '.join([script] + sys.argv[1:])
         shell.ShellExecuteEx(lpVerb='runas', lpFile=sys.executable, lpParameters=params)
         sys.exit(0)
-        
-
-
 
 def find_pid_from_name(name):
     for proc in psutil.process_iter(['name']):

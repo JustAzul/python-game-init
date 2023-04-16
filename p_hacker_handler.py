@@ -1,7 +1,6 @@
 from threading import Thread
 from time import sleep
 from utils import is_process_running, kill_process_name
-import os
 import psutil
 import subprocess
 
@@ -40,9 +39,12 @@ class ProcessHackerHandler(Thread):
             print('ProcessHackerHandler internal pid not found, trying to kill by process name')
             kill_process_name(self.process_name)
             
-    def handle_kernel(self, new_state = r'stop'):
+    def handle_kernel(self, new_state='stop'):
         print(f'ProcessHackerHandler handle_kernel: {new_state}')
-        os.system('cmd /c sc ' + new_state + ' kprocesshacker3')
+        try:
+            subprocess.run(['cmd', '/c', 'sc', new_state, 'kprocesshacker3'], check=True)
+        except subprocess.CalledProcessError as e:
+            print(f"Error occurred while trying to handle kernel: {e}")
         
     def stop_process_if_running(self):
         if self.is_process_running() == True:

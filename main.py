@@ -1,5 +1,5 @@
 from p_hacker_handler import ProcessHackerHandler
-from priority import set_process_priority_by_name
+from priority import set_process_priority_by_name, PriorityLevel
 from time import sleep
 from utils import elevate, is_process_running
 
@@ -11,7 +11,7 @@ def main(game_name: str) -> None:
 
     if is_process_running(game_name):
         print('Game is already running!')
-        set_process_priority_by_name(game_name)
+        set_process_priority_by_name(game_name, PriorityLevel.HIGH)
         print('Exiting..')
         return
 
@@ -21,7 +21,7 @@ def main(game_name: str) -> None:
     while not is_process_running(game_name):
         sleep(1)
 
-    set_process_priority_by_name(game_name)
+    set_process_priority_by_name(game_name, PriorityLevel.HIGH)
 
     while is_process_running(game_name):
         sleep(1)
