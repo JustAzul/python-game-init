@@ -1,9 +1,12 @@
-import os, subprocess, psutil
+import os
+import subprocess
+import psutil
 from threading import Thread
 from time import sleep
 from utils import is_process_running, kill_process_name
 
-class p_hacker_handler(Thread):
+
+class ProcessHackerHandler(Thread):
     def __init__(self):
         Thread.__init__(self)
         
@@ -15,18 +18,18 @@ class p_hacker_handler(Thread):
         
     def is_process_running(self):
         result = is_process_running(self.process_name)
-        print(r'is_process_running: ' + str(result))
+        print(f'ProcessHackerHandler is_process_running: {result}')
         return result
     
     def kill(self):
-        print('Trying to kill Process..')
+        print('ProcessHackerHandler trying to kill process..')
         
         if self.is_process_running() == False:
-            print('Process is not running!')
+            print('ProcessHackerHandler process is not running!')
             return
         
         if self.process != None:
-            print('Found internal pid, proceding..')
+            print('ProcessHackerHandler found internal pid, proceding..')
             parent_pid = self.process.pid
             parent = psutil.Process(parent_pid)
             
@@ -35,11 +38,11 @@ class p_hacker_handler(Thread):
                 
             parent.kill()
         else:
-            print('Internal pid not found, trying to kill by process name')
+            print('ProcessHackerHandler internal pid not found, trying to kill by process name')
             kill_process_name(self.process_name)
             
     def handle_kernel(self, new_state = r'stop'):
-        print(r'handle_kernel: ' + new_state)
+        print(f'ProcessHackerHandler handle_kernel: {new_state}')
         os.system('cmd /c sc ' + new_state + ' kprocesshacker3')
         
     def stop_process(self):
@@ -51,12 +54,12 @@ class p_hacker_handler(Thread):
     def start_process(self):        
         self.handle_kernel(r'start')
         
-        print('Waiting a second..')
+        print('ProcessHackerHandler waiting a second..')
         sleep(1)
         
         if self.is_process_running() == False:
-            print('Running process..')
+            print('ProcessHackerHandler running process..')
             full_path = self.process_loc + ' ' + self.process_args
             self.process = subprocess.Popen(full_path)
         else:
-            print('Process Hacker is already running, exiting..')
+            print('ProcessHackerHandler process hacker is already running, exiting..')

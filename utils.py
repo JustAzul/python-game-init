@@ -5,43 +5,29 @@ import win32com.shell.shell as shell
 
 ASADMIN = 'asadmin'
 
-def kill_process_name(process_name):
+def kill_process_name(process_name: str) -> None:
+    """Kills a process by name."""
     for process in psutil.process_iter():
         try:
             if process.name().lower() not in process_name.lower():
                 continue
-            else:
-                print('Killing script: ' + process_name)
-                process.kill()
+            print(f'Killing script: {process_name}')
+            process.kill()
         except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
             pass
 
-def is_process_running(exe_name):
-    for process in psutil.process_iter():
-        try:
-            if exe_name.lower() not in process.name().lower():
-                continue
-            else:
-                return True
-        except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
-            pass
-    return False
+def is_process_running(exe_name: str) -> bool:
+    """Checks if a process is running by name."""
+    return any(exe_name.lower() in process.name().lower() for process in psutil.process_iter())
 
-def is_game_running():
-    target_name =  r'Fortnite'
-
-    for process in psutil.process_iter():
-        try:
-            if target_name.lower() in process.name().lower():
-                return True
-        except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
-            pass
-
-    return False
+def is_game_running() -> bool:
+    """Checks if the 'Fortnite' game is running."""
+    return is_process_running('Fortnite')
 
 def elevate():
+    """Restarts the script with elevated privileges if not already running as administrator."""
     if sys.argv[-1] != ASADMIN:
-            script = os.path.abspath(sys.argv[0])
-            params = ' '.join([script] + sys.argv[1:] + [ASADMIN])
-            shell.ShellExecuteEx(lpVerb='runas', lpFile=sys.executable, lpParameters=params)
-            sys.exit(0)
+        script = os.path.abspath(sys.argv[0])
+        params = ' '.join([script] + sys.argv[1:] + [ASADMIN])
+        shell.ShellExecuteEx('runas', sys.executable, params)
+        sys.exit(0)
